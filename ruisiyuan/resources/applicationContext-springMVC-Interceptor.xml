@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<!-- springMVC拦截器配置 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<!-- 拦截的请求路径 -->
+			<mvc:mapping path="/**"/>
+			<!-- 对应的拦截器 -->
+			<bean class="com.yjw.interceptor.AuthInterceptor">
+				<!-- 给拦截器传参 -->
+				<!-- <property name="name" value="拦截器名称" /> -->
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+</beans>

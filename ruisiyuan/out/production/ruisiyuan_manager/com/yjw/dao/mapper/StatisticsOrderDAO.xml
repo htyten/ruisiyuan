@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjw.dao.StatisticsOrderDAO">
+	<select id="getStatisticsByMonth" resultType="StatisticsOrder">
+		select count(*) total, -- 下单总量
+				sum(case when state = -1 or state = -4 or state = -7 then 1 else 0 end) off,  -- 取消总量
+				sum(case when state = 4 or state = 5 then 1 else 0 end) success,  -- 已完成订单
+				sum(case when state = -3 or state =-6 then 1 else 0 end) fail,  -- 退款退货量
+				CONCAT(year(createTime), case when 10 > month(createTime) then CONCAT('0', month(createTime)) else month(createTime) end) date 
+		   from tb_order 
+		  where 1 = 1
+		  <if test="startDate != null and startDate != ''">
+		  	and createTime >= #{startDate}
+		  </if>
+		  <if test="endDate != null and endDate != ''">
+		  	and #{endDate} >= createTime
+		  </if>
+	   group by CONCAT(year(createTime), case when 10 > month(createTime) then CONCAT('0', month(createTime)) else month(createTime) end)
+	</select>
+</mapper>

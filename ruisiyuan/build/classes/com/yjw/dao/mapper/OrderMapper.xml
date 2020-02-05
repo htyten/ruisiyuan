@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjw.dao.OrderDAO">
+
+	<update id="editState">
+		update tb_order set info = #{info}, state = #{state} where id = #{id}
+	</update>
+
+	<update id="editInfo">
+		update tb_order set info = #{info} where id = #{id}
+	</update>
+
+	<insert id="add">
+		insert into tb_order(id, brandId, brandName, modelId, modelName, 
+							price, state, logistics, user, userMsg, 
+							createTime, updateTime, updator, info, usercname, phone)
+					values(#{id}, #{brandId}, #{brandName}, #{modelId}, #{modelName}, 
+							#{price}, #{state}, #{logistics}, #{user}, #{userMsg}, 
+							#{createTime}, #{updateTime}, #{updator},
+							#{info}, #{usercname}, #{phone})
+	</insert>
+	
+	<insert id="addLog">
+		insert into tb_order_log(orderId, form, toState, info, updator, updateTime, createTime)
+				values(#{orderId}, #{form}, #{toState}, #{info}, #{updator}, now(), #{createTime});
+	</insert>
+	
+	<select id="findById" resultType="Order">
+		select id, brandId, brandName, modelId, modelName, 
+				price, state, logistics, user, userMsg, 
+				createTime, updateTime, updator, info, 
+				usercname, phone
+		  from tb_order
+		 where id = #{id}
+	</select>
+	
+	<select id="getTotal" resultType="int">
+		select count(*) from tb_order where 1 = 1
+		<if test="idCondition != null and idCondition != ''">
+			and id = #{idCondition}
+		</if>
+		<if test="brandIdCondition != 0">
+			and brandId = #{brandId}
+		</if>
+		<if test="modelIdCondition != 0">
+			and modelId = #{modelIdCondition}
+		</if>
+		<if test="createTimeStartCondition != null">
+			and createTime >= #{createTimeStartCondition}
+		</if>
+		<if test="createTimeEndCondition != null">
+			and #{createTimeEndCondition} >= createTime
+		</if>
+		<if test="stateCondition != -100">
+			and state = #{stateCondition}
+		</if>
+		<if test="userCondition != null and userCondition != ''">
+			and user like CONCAT('%', #{userCondition}, '%')
+		</if>
+		<if test="phoneCondition != null and phoneCondition != ''">
+			and phone like CONCAT('%', #{phoneCondition}, '%')
+		</if>
+	</select>
+	
+	<select id="getItems" resultType="Order">
+		select id, brandId, brandName, modelId, modelName, 
+				price, state, logistics, user, userMsg, 
+				createTime, updateTime, updator, info, 
+				usercname, phone
+		  from tb_order
+		 where 1 = 1
+		 <if test="idCondition != null and idCondition != ''">
+			and id = #{idCondition}
+		</if>
+		<if test="brandIdCondition != 0">
+			and brandId = #{brandId}
+		</if>
+		<if test="modelIdCondition != 0">
+			and modelId = #{modelIdCondition}
+		</if>
+		<if test="createTimeStartCondition != null">
+			and createTime >= #{createTimeStartCondition}
+		</if>
+		<if test="createTimeEndCondition != null">
+			and #{createTimeEndCondition} >= createTime
+		</if>
+		<if test="stateCondition != -100">
+			and state = #{stateCondition}
+		</if>
+		<if test="userCondition != null and userCondition != ''">
+			and user like CONCAT('%', #{userCondition}, '%')
+		</if>
+		<if test="phoneCondition != null and phoneCondition != ''">
+			and phone like CONCAT('%', #{phoneCondition}, '%')
+		</if>
+		order by createTime desc
+		limit #{start}, #{rows}
+	</select>
+</mapper>

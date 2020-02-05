@@ -1,0 +1,86 @@
+[{
+	"id":"icon icon-users",
+	"text": "icon icon-users"
+},{
+	"id": "icon icon-add",
+	"text": "icon icon-add",
+	"selected":true
+},{
+	"id": "icon icon-edit",
+	"text": "icon icon-edit"
+},{
+	"id": "icon icon-clear",
+	"text": "icon icon-clear"
+},{
+	"id": "icon icon-remove",
+	"text": "icon icon-remove"
+},{
+	"id": "icon icon-save",
+	"text": "icon icon-save"
+},{
+	"id": "icon icon-cut",
+	"text": "icon icon-cut"
+},{
+	"id": "icon icon-ok",
+	"text": "icon icon-ok"
+},{
+	"id": "icon icon-no",
+	"text": "icon icon-no"
+},{
+	"id": "icon icon-cancel",
+	"text": "icon icon-cancel"
+},{
+	"id": "icon icon-reload",
+	"text": "icon icon-reload"
+},{
+	"id": "icon icon-search",
+	"text": "icon icon-search"
+},{
+	"id": "icon icon-print",
+	"text": "icon icon-print"
+},{
+	"id": "icon icon-help",
+	"text": "icon icon-help"
+},{
+	"id": "icon icon-undo",
+	"text": "icon icon-undo"
+},{
+	"id": "icon icon-redo",
+	"text": "icon icon-redo"
+},{
+	"id": "icon icon-back",
+	"text": "icon icon-back"
+},{
+	"id": "icon icon-sum",
+	"text": "icon icon-sum"
+},{
+	"id": "icon icon-tip",
+	"text": "icon icon-tip"
+},{
+	"id": "icon icon-filter",
+	"text": "icon icon-filter"
+},{
+	"id": "icon icon-man",
+	"text": "icon icon-man"
+},{
+	"id": "icon icon-lock",
+	"text": "icon icon-lock"
+},{
+	"id": "icon icon-more",
+	"text": "icon icon-more"
+},{
+	"id": "icon icon-large-picture",
+	"text": "icon icon-large-picture"
+},{
+	"id": "icon icon-large-clipart",
+	"text": "icon icon-large-clipart"
+},{
+	"id": "icon icon-large-shapes",
+	"text": "icon icon-large-shapes"
+},{
+	"id": "icon icon-large-smartart",
+	"text": "icon icon-large-smartart"
+},{
+	"id": "icon icon-large-chart",
+	"text": "icon icon-large-chart"
+}]

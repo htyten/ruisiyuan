@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjw.dao.RoleDAO">
+	<insert id="addRoleMenus">
+		insert into tb_sys_role_menu(roleId, menuId)
+			values
+			<foreach collection="menus" item="menuId" separator=",">
+				(#{roleId}, #{menuId})
+			</foreach>
+	</insert>
+
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into tb_sys_role(name, account, createTime)
+			values(#{name}, #{account}, now())
+	</insert>
+
+	<select id="getTotal" resultType="int">
+		select count(*) from tb_sys_role where 1 = 1
+		<if test="nameCondition != null and nameCondition != ''">
+			and name like CONCAT('%', #{nameCondition}, '%')
+		</if>
+	</select>
+	
+	<select id="getItems" resultType="Role">
+		select id, name, account, createTime
+			from tb_sys_role
+		   where 1 = 1
+		<if test="nameCondition != null and nameCondition != ''">
+			and name like CONCAT('%', #{nameCondition}, '%')
+		</if>
+		limit #{start}, #{rows}
+	</select>
+
+	<select id="getRolesByAccount" resultType="Role">
+		select r.id, r.name, r.account, r.createTime 
+			from tb_sys_role r, tb_sys_role_account ra
+			where r.id = ra.roleId and ra.account = #{account}
+	</select>
+	
+	<select id="getRoles" resultType="Role">
+		select r.id, r.name, r.account, r.createTime 
+			from tb_sys_role r
+	</select>
+	
+	<update id="edit">
+		update tb_sys_role set name = #{name} where id = #{id}
+	</update>
+	
+	<delete id="delRoleMenus">
+		delete from tb_sys_role_menu where roleId = #{roleId}
+	</delete>
+	
+	<delete id="delRolesMenus">
+		delete from tb_sys_role_menu where roleId in
+		<foreach collection="array" open="(" close=")" separator="," item="roleId">
+			${roleId}
+		</foreach>
+	</delete>
+	
+	<delete id="del">
+		delete from tb_sys_role where id in
+		<foreach collection="array" open="(" close=")" separator="," item="roleId">
+			${roleId}
+		</foreach>
+	</delete>
+</mapper>

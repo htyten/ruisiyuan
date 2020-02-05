@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjw.dao.MenuDAO">
+	<resultMap type="Menu" id="loadMenuMap">
+		<!-- oneToMany -->
+		<collection property="childs" column="id" select="getChildsByParentId"></collection>
+	</resultMap>
+	
+	<resultMap type="Menu" id="itemsMenuMap">
+		<association property="parent" column="parentId" select="findMenu"></association>
+	</resultMap>
+	
+	<delete id="delRoleMenu">
+		delete from tb_sys_role_menu where menuId in
+		<foreach collection="array" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<delete id="del">
+		delete from tb_sys_menu where id in
+		<foreach collection="array" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="edit">
+		update tb_sys_menu set name = #{name}, mlevel = #{mlevel}, orderNum = #{orderNum}, 
+						parentid = #{parentId}, authpath = #{authPath}, icon = #{icon}, type = #{type}
+					where id = #{id}
+	</update>
+	
+	<insert id="add">
+		insert into tb_sys_menu(name, mlevel, orderNum, parentid, authpath, icon, account, createtime, type)
+			values(#{name}, #{mlevel}, #{orderNum}, #{parentId}, #{authPath}, #{icon}, #{account}, now(), #{type});
+	</insert>
+	
+	<select id="findMenu" resultMap="itemsMenuMap">
+		select id, name, mlevel, ordernum, parentid, authpath, icon, account, createtime, type
+			from tb_sys_menu where id = #{id}
+	</select>
+	
+	<select id="getItems" resultMap="itemsMenuMap">
+		select id, name, mlevel, ordernum, parentid, authpath, icon, account, createtime, type
+			from tb_sys_menu where 1 = 1
+		<if test="nameCondition != null and nameCondition != ''">
+			and name like CONCAT('%', #{nameCondition}, '%') 
+		</if>
+		<if test="parentIdCondition != -100">
+			and parentid = #{parentIdCondition}
+		</if>
+		limit #{start}, #{rows}
+	</select>
+	
+	<select id="getTotal" resultType="int">
+		select count(*) from tb_sys_menu where 1 = 1
+		<if test="nameCondition != null and nameCondition != ''">
+			and name like CONCAT('%', #{nameCondition}, '%') 
+		</if>
+		<if test="parentIdCondition != -100">
+			and parentid = #{parentIdCondition}
+		</if>
+	</select>
+	
+	<select id="getMenusByRoleId" resultType="Menu">
+		select m.id, m.name, m.mlevel, m.ordernum, m.parentid, m.authpath, 
+				m.icon, m.account, m.createtime, m.type
+			from tb_sys_menu m 
+	   left join tb_sys_role_menu rm 
+	   		  on m.id = rm.menuId
+	   	   where rm.roleId = #{roleId}
+	    order by mlevel, ordernum
+	</select>
+	
+	<select id="getAllLeftMenus" resultType="Menu">
+		select id, name, mlevel, ordernum, parentid, authpath, icon, account, createtime, type
+			from tb_sys_menu
+		   where mlevel in (1, 2)
+	    order by mlevel, ordernum
+	</select>
+	
+	<select id="getAllMenus" resultType="Menu">
+		select id, name, mlevel, ordernum, parentid, authpath, icon, account, createtime, type
+			from tb_sys_menu order by mlevel, ordernum
+	</select>
+	
+	<select id="getMenusByMlevel" resultType="Menu">
+		select id, name, mlevel, ordernum, parentid, authpath, icon, account, createtime, type
+			from tb_sys_menu where mlevel = #{mlevel} order by mlevel, ordernum
+	</select>
+
+	<!-- 因为角色帐号关联关系是多对多的关系，在加载菜单的时候需要去重复 -->
+	<select id="getMenusByRoles" resultMap="loadMenuMap">
+		select DISTINCT m.id, m.name, m.mlevel, m.orderNum, 
+				m.parentId, m.authPath, m.icon, m.account, 
+				m.createTime, m.type 
+			from tb_sys_menu m left join tb_sys_role_menu rm
+		   on m.id = rm.menuId 
+		   where m.mlevel = 1 and rm.roleid in
+		   <foreach collection="list" item="c" index="index" open="(" close=")" separator=",">
+		   	#{c.id}
+		   </foreach>
+		   order by m.mlevel, m.orderNum
+	</select>
+	
+	<select id="getChildsByParentId" resultType="Menu">
+		select m.id, m.name, m.mlevel, m.orderNum, 
+				m.parentId, m.authPath, m.icon, m.account, 
+				m.createTime, m.type 
+			from tb_sys_menu m
+		   where m.parentId = #{menuId}
+	    order by m.mlevel, m.orderNum
+	</select>
+</mapper>

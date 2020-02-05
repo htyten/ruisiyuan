@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjw.dao.AccountDAO">
+	
+	<select id="loginValidate" resultType="Account">
+		select account, password, status, cname, headpic, createTime from tb_sys_account
+			where account = #{account} and password = #{password}
+	</select>
+	
+	<select id="getTotal" resultType="int">
+		select count(*) from tb_sys_account where 1 = 1
+		<if test="accountCondition != null and accountCondition != ''">
+			and account like CONCAT('%', #{accountCondition}, '%')
+		</if>
+		<if test="cnameCondition != null and cnameCondition != ''">
+			and cname like CONCAT('%', #{cnameCondition}, '%')
+		</if>
+	</select>
+	
+	<select id="getItems" resultType="Account">
+		select account, password, status, cname, headpic, createtime
+			from tb_sys_account
+		   where 1 = 1
+		<if test="accountCondition != null and accountCondition != ''">
+			and account like CONCAT('%', #{accountCondition}, '%')
+		</if>
+		<if test="cnameCondition != null and cnameCondition != ''">
+			and cname like CONCAT('%', #{cnameCondition}, '%')
+		</if>
+		limit #{start}, #{rows}
+	</select>
+	
+	<select id="validate" resultType="Account">
+		select account, password, status, cname, headpic, createtime 
+			from tb_sys_account where account = #{account}
+	</select>
+	
+	<insert id="add">
+		insert into tb_sys_account(account, password, status, cname, headpic, createTime)
+			values(#{account}, #{password}, #{status}, #{cname}, #{headpic}, now());
+	</insert>
+	
+	<insert id="addAccRole">
+		insert into tb_sys_role_account(account, roleId, createTime)
+			values
+			<foreach collection="roleIds" item="roleId" separator=",">
+				(#{account}, #{roleId}, now())
+			</foreach>
+	</insert>
+	
+	<delete id="delBatch">
+		delete from tb_sys_account where account in
+		<foreach collection="array" item="account" open="(" close=")" separator=",">
+			#{account}
+		</foreach>
+	</delete>
+	
+	<delete id="del">
+		delete from tb_sys_account where account = #{account}
+	</delete>
+	
+	<delete id="delBatchRoleByAccs">
+		delete from tb_sys_role_account where account in
+		<foreach collection="array" item="account" open="(" close=")" separator=",">
+			#{account}
+		</foreach>
+	</delete>
+	
+	<delete id="delRoleByAcc">
+		delete from tb_sys_role_account where account = #{account}
+	</delete>
+	
+	<select id="findAccountInfo" resultMap="accMap">
+		select acc.account account, acc.password password, acc.cname cname, 
+				acc.status status, acc.createTime createTime, acc.headpic headpic,
+				r.id id, r.createTime rcreateTime, r.account raccount
+			from tb_sys_account acc, tb_sys_role r, tb_sys_role_account ra
+		   where acc.account = ra.account
+		     and ra.roleId = r.id
+		     and acc.account = #{account}
+	</select>
+	
+	<update id="edit">
+		update tb_sys_account set password = #{password}, cname = #{cname}, 
+				status = #{status}, headpic = #{headpic}
+			where account = #{account}
+	</update>
+	
+	<select id="getAccounts" resultType="Account">
+		select account, password, status, cname, headpic, createtime
+			from tb_sys_account
+		   where 1 = 1
+		<if test="accountCondition != null and accountCondition != ''">
+			and account like CONCAT('%', #{accountCondition}, '%')
+		</if>
+		<if test="cnameCondition != null and cnameCondition != ''">
+			and cname like CONCAT('%', #{cnameCondition}, '%')
+		</if>
+	</select>
+	
+	<resultMap type="Account" id="accMap">
+		<id property="account" column="account"/>
+		<result property="password" column="password"/>
+		<result property="cname" column="cname"/>
+		<result property="status" column="status"/>
+		<result property="createTime" column="createTime"/>
+		<result property="headpic" column="headpic"/>
+		<collection property="roles" ofType="Role">
+			<id property="id" column="id"/>
+			<result property="name" column="name"/>
+			<result property="createTime" column="rcreateTime"/>
+			<result property="account" column="raccount"/>
+		</collection>
+	</resultMap>
+</mapper>
